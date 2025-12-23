@@ -10,7 +10,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Setter
 @Getter
-@Builder
 public class Task {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

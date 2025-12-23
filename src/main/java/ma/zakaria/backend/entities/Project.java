@@ -14,7 +14,7 @@ import java.util.List;
 public class Project {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String title;
     private String description;
     private Date createdDate;
     @ManyToOne(fetch = FetchType.LAZY)
