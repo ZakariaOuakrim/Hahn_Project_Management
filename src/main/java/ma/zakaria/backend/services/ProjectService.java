@@ -46,7 +46,6 @@ public class ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        // Check if the project belongs to the user
         if (!project.getUser().getEmail().equals(userEmail)) {
             throw new RuntimeException("Unauthorized access to project");
         }

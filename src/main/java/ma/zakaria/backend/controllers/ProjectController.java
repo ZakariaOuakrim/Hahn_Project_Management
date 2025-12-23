@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import ma.zakaria.backend.dtos.CreateProjectRequest;
 import ma.zakaria.backend.dtos.ProjectResponse;
 import ma.zakaria.backend.entities.Project;
+import ma.zakaria.backend.mappers.ProjectMapper;
 import ma.zakaria.backend.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,16 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private ProjectMapper projectMapper;
+
+    // Create a new project
     @PostMapping
     public ResponseEntity<?> createProject(
             @Valid @RequestBody CreateProjectRequest request,
             Authentication authentication) {
         try {
-            String userEmail = authentication.getName(); // Get email from JWT token
+            String userEmail = authentication.getName();
 
             Project project = projectService.createProject(
                     request.getTitle(),
@@ -35,7 +40,7 @@ public class ProjectController {
                     userEmail
             );
 
-            ProjectResponse response = convertToResponse(project);
+            ProjectResponse response = projectMapper.toResponse(project);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (Exception e) {
@@ -52,7 +57,7 @@ public class ProjectController {
             List<Project> projects = projectService.getUserProjects(userEmail);
 
             List<ProjectResponse> responses = projects.stream()
-                    .map(this::convertToResponse)
+                    .map(projectMapper::toResponse)
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(responses);
@@ -63,6 +68,7 @@ public class ProjectController {
         }
     }
 
+    // Get a specific project by ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(
             @PathVariable Long id,
@@ -71,7 +77,7 @@ public class ProjectController {
             String userEmail = authentication.getName();
 
             Project project = projectService.getProjectById(id, userEmail);
-            ProjectResponse response = convertToResponse(project);
+            ProjectResponse response = projectMapper.toResponse(project);
 
             return ResponseEntity.ok(response);
 
@@ -82,25 +88,5 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error fetching project: " + e.getMessage());
         }
-    }
-
-    private ProjectResponse convertToResponse(Project project) {
-        int totalTasks = project.getTasks() != null ? project.getTasks().size() : 0;
-        int completedTasks = project.getTasks() != null
-                ? (int) project.getTasks().stream().filter(task -> task.isCompleted()).count()
-                : 0;
-        double progressPercentage = totalTasks > 0
-                ? (completedTasks * 100.0) / totalTasks
-                : 0.0;
-
-        return new ProjectResponse(
-                project.getId(),
-                project.getTitle(),
-                project.getDescription(),
-                project.getCreatedDate(),
-                totalTasks,
-                completedTasks,
-                progressPercentage
-        );
     }
 }
