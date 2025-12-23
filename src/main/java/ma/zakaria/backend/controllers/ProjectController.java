@@ -89,4 +89,24 @@ public class ProjectController {
                     .body("Error fetching project: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProject(
+            @PathVariable Long id,
+            Authentication authentication) {
+        try {
+            String userEmail = authentication.getName();
+
+            projectService.deleteProject(id, userEmail);
+
+            return ResponseEntity.ok("Project deleted successfully");
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting project: " + e.getMessage());
+        }
+    }
+
 }

@@ -32,7 +32,7 @@ public class BackendApplication {
             // Create Users
             User user1 = new User();
             user1.setUserName("Zakaria Ouakrim");
-            user1.setEmail("zakaria@example.com");
+            user1.setEmail("zakaria@gmail.com");
             user1.setPassword(passwordEncoder.encode("zakaria"));
             userRepository.save(user1);
 

@@ -52,4 +52,10 @@ public class ProjectService {
 
         return project;
     }
+
+    public void deleteProject(Long projectId, String userEmail) {
+        Project project = getProjectById(projectId, userEmail);
+        projectRepository.delete(project);
+    }
+
 }
