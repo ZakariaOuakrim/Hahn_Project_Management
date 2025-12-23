@@ -22,7 +22,6 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    // Create a new project
     @PostMapping
     public ResponseEntity<?> createProject(
             @Valid @RequestBody CreateProjectRequest request,
@@ -45,7 +44,6 @@ public class ProjectController {
         }
     }
 
-    // Get all projects for the logged-in user
     @GetMapping
     public ResponseEntity<?> getUserProjects(Authentication authentication) {
         try {
@@ -65,7 +63,6 @@ public class ProjectController {
         }
     }
 
-    // Get a specific project by ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectById(
             @PathVariable Long id,
@@ -87,7 +84,6 @@ public class ProjectController {
         }
     }
 
-    // Helper method to convert Project entity to ProjectResponse DTO
     private ProjectResponse convertToResponse(Project project) {
         int totalTasks = project.getTasks() != null ? project.getTasks().size() : 0;
         int completedTasks = project.getTasks() != null
